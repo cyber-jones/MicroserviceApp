@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{53BF2320-DEB3-4791-B69B-B077E81BB622}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateway", "Gateway", "{524127B4-F1A5-4ACF-9B98-2094F7F49A2F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{FC2E30A1-05B9-46CD-B775-81E245AECD77}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{C2966D9E-C6A8-442C-8622-87FAAD807BE5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cyclone.Services.CouponAPI", "Cyclone.Services.CouponAPI\Cyclone.Services.CouponAPI.csproj", "{F09BFCBE-0664-4742-B321-8ABF387F3004}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cyclone", "Cyclon\Cyclone.csproj", "{4030AD88-87A1-496F-89D8-37F40FEC205A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cyclone.Services.AuthAPI", "Cyclone.Services.AuthAPI\Cyclone.Services.AuthAPI.csproj", "{5AF84730-A88C-4A6B-BDC9-55863BEEE63D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F09BFCBE-0664-4742-B321-8ABF387F3004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F09BFCBE-0664-4742-B321-8ABF387F3004}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F09BFCBE-0664-4742-B321-8ABF387F3004}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F09BFCBE-0664-4742-B321-8ABF387F3004}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4030AD88-87A1-496F-89D8-37F40FEC205A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4030AD88-87A1-496F-89D8-37F40FEC205A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4030AD88-87A1-496F-89D8-37F40FEC205A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4030AD88-87A1-496F-89D8-37F40FEC205A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AF84730-A88C-4A6B-BDC9-55863BEEE63D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AF84730-A88C-4A6B-BDC9-55863BEEE63D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AF84730-A88C-4A6B-BDC9-55863BEEE63D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AF84730-A88C-4A6B-BDC9-55863BEEE63D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F09BFCBE-0664-4742-B321-8ABF387F3004} = {C2966D9E-C6A8-442C-8622-87FAAD807BE5}
+		{4030AD88-87A1-496F-89D8-37F40FEC205A} = {53BF2320-DEB3-4791-B69B-B077E81BB622}
+		{5AF84730-A88C-4A6B-BDC9-55863BEEE63D} = {C2966D9E-C6A8-442C-8622-87FAAD807BE5}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {30DB09FF-757A-42AE-BA25-7EA41A158A7E}
+	EndGlobalSection
+EndGlobal
