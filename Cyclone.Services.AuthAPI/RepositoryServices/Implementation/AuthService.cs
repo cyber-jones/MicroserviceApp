@@ -10,22 +10,28 @@ namespace Cyclone.Services.AuthAPI.RepositoryServices.Implementation
 	public class AuthService : IAuthService
 	{
 		private readonly AuthDbContext _context;
+		private readonly ITokenGenerator _tokenGenerator;
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly SignInManager<ApplicationUser> _signInManager;
 		private readonly RoleManager<IdentityRole> _roleManager;
 
         public AuthService(
 				AuthDbContext context,
+				ITokenGenerator tokenGenerator,
 				UserManager<ApplicationUser> userManager,
 				SignInManager<ApplicationUser> signInManager,
 				RoleManager<IdentityRole> roleManager
 			)
         {
 			_context = context;
+			_tokenGenerator = tokenGenerator;
 			_userManager = userManager;
 			_signInManager = signInManager;
 			_roleManager = roleManager;
         }
+
+
+
 
 
 
@@ -41,6 +47,8 @@ namespace Cyclone.Services.AuthAPI.RepositoryServices.Implementation
 
 					if (isValid)
 					{
+						await _signInManager.SignInAsync(user, false);
+
 						return new UserDto()
 						{
 							Id = user.Id,
@@ -59,6 +67,12 @@ namespace Cyclone.Services.AuthAPI.RepositoryServices.Implementation
 				throw new Exception(ex.Message);
 			}
 		}
+
+
+
+
+
+
 
 		public async Task<string> RegisterAsync(RegistrationRequestDto registrationRequestDto)
 		{
@@ -100,6 +114,40 @@ namespace Cyclone.Services.AuthAPI.RepositoryServices.Implementation
 			catch (Exception ex) 
 			{
 				return ex.Message;
+			}
+		}
+
+
+
+
+
+
+		public async Task<bool> AssignRoleAsync(string email, string role)
+		{
+			try
+			{
+				if (email != null || role != null)
+				{
+					var user = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.Email == email);
+
+					if (user != null)
+					{
+						if (!_roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
+						{
+							await _roleManager.CreateAsync(new IdentityRole(role));
+						}
+
+						await _userManager.AddToRoleAsync(user, role);
+
+						return true;
+					}
+				}
+
+				return false;
+			}
+			catch (Exception ex)
+			{ 
+				throw new Exception(ex.Message);
 			}
 		}
 	}

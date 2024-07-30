@@ -2,15 +2,18 @@ using Cyclone.Services.AuthAPI.Data;
 using Cyclone.Services.AuthAPI.Models;
 using Cyclone.Services.AuthAPI.RepositoryServices.Abstraction;
 using Cyclone.Services.AuthAPI.RepositoryServices.Implementation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<AuthDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("default") ??
-		throw new Exception("Connection String Not Found!")));
+	options.UseSqlServer(builder.Configuration.GetConnectionString("default")));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 	.AddEntityFrameworkStores<AuthDbContext>()
@@ -20,6 +23,7 @@ builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSett
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

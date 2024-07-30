@@ -1,6 +1,7 @@
 ﻿using Cyclone.Services.AuthAPI.Data;
 using Cyclone.Services.AuthAPI.DTOs;
 using Cyclone.Services.AuthAPI.RepositoryServices.Abstraction;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,18 +26,19 @@ namespace Cyclone.Services.AuthAPI.Controllers
 
 
 
-		[HttpPost]
+
+		[HttpPost("login")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
+		public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginRequestDto loginRequestDto)
 		{
 			try
 			{
 				LoginResponseDto loginResponseDto = new();
 
-				if (loginRequestDto == null || ModelState.IsValid)
+				if (loginRequestDto != null && ModelState.IsValid)
 				{
 					var user = await _authService.LoginAsync(loginRequestDto);
 
@@ -59,7 +61,7 @@ namespace Cyclone.Services.AuthAPI.Controllers
 			}
 			catch (Exception ex)
 			{
-				return StatusCode(StatusCodes.Status500InternalServerError);
+				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
 			}
 		}
 
@@ -70,12 +72,11 @@ namespace Cyclone.Services.AuthAPI.Controllers
 
 
 
-
-		[HttpPost]
+		[HttpPost("signup")]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> Register([FromBody] RegistrationRequestDto registrationRequestDto)
+		public async Task<ActionResult<ResponseDto>> Register([FromBody] RegistrationRequestDto registrationRequestDto)
 		{
 			try
 			{
@@ -98,6 +99,49 @@ namespace Cyclone.Services.AuthAPI.Controllers
 
 				_responseDto.Success = false;
 				_responseDto.Message = "An error has occurred";
+				return BadRequest(_responseDto);
+			}
+			catch (Exception ex)
+			{
+				_responseDto.Success = false;
+				_responseDto.Message = ex.Message;
+				return StatusCode(StatusCodes.Status500InternalServerError, _responseDto);
+			}
+		}
+
+
+
+
+
+
+
+
+
+        [HttpPost("assignrole")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<ActionResult<ResponseDto>> AssignRole([FromBody] RegistrationRequestDto registrationRequestDto)
+		{
+			try
+			{
+				if (registrationRequestDto.Email != null && registrationRequestDto.Role != null)
+				{
+					var success = await _authService.AssignRoleAsync(registrationRequestDto.Email, registrationRequestDto.Role);
+
+					if (success)
+					{
+						_responseDto.Message = "Success";
+						return Ok(_responseDto);
+					}
+
+					_responseDto.Success = false;
+					_responseDto.Message = "Failed to assign role";
+					return StatusCode(StatusCodes.Status500InternalServerError, _responseDto);
+				}
+
+				_responseDto.Success = false;
+				_responseDto.Message = "Email and role required!";
 				return BadRequest(_responseDto);
 			}
 			catch (Exception ex)

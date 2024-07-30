@@ -1,0 +1,49 @@
+﻿@model RegistrationRequestDto
+
+
+
+
+
+
+
+<div class="card border-0">
+	<div class="card-header bg-secondary">
+		<div class="row">
+			<div class="col-12 text-center">
+				<h4>Signup</h4>
+			</div>
+		</div>
+	</div>
+	<div class="card-body p-5">
+		<div class="row">
+			<form>
+				<div class="text-danger" asp-validation-summary="ModelOnly"></div>
+				<div class="row mt-2">
+					<input asp-for="Name" class="form-control" placeholder="Name" />
+					<span asp-validation-for="Name" class="text-danger"></span>
+				</div>
+				<div class="row mt-2">
+					<input asp-for="Email" class="form-control" placeholder="Email" />
+					<span asp-validation-for="Email" class="text-danger"></span>
+				</div>
+				<div class="row mt-2">
+					<input asp-for="PhoneNumber" class="form-control" placeholder="PhoneNumber" />
+					<span asp-validation-for="PhoneNumber" class="text-danger"></span>
+				</div>
+				<div class="row mt-2">
+					<select asp-for="Role" class="form-select" asp-items="@ViewBag.Roles" placeholder="Select Role">
+					</select>
+					<span asp-validation-for="Role" class="text-danger"></span>
+				</div>
+				<div class="row mt-2">
+					<input asp-for="Password" class="form-control" placeholder="Password" />
+					<span asp-validation-for="Password" class="text-danger"></span>
+				</div>
+				<div class="row mt-3">
+					<button class="btn btn-success">Submit</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="card-footer bg-secondary"></div>
+</div>

@@ -23,7 +23,7 @@ namespace Cyclone.RepositoryService.Implementation
 		{
 			try
 			{
-				HttpClient httpClient = _httpClientFactory.CreateClient("CyloneCouponAPI");
+				HttpClient httpClient = _httpClientFactory.CreateClient("CyloneAPI");
 				HttpRequestMessage httpRequestMessage = new();
 
 				httpRequestMessage.Headers.Add("Accept", "application/json");

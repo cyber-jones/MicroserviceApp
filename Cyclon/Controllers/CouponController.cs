@@ -28,6 +28,8 @@ namespace Cyclone.Controllers
 					List<CouponDto> coupons = JsonConvert.DeserializeObject<List<CouponDto>>(Convert.ToString(responseDto.Data));
 					return View(coupons);
 				}
+
+				TempData["error"] = responseDto.Message;
 			}
 			catch (Exception ex)
 			{
@@ -40,7 +42,7 @@ namespace Cyclone.Controllers
 
 
 
-		public async Task<IActionResult> Create()
+		public IActionResult Create()
 		{
 			return View();
 		}
@@ -50,8 +52,28 @@ namespace Cyclone.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Create(CouponDto couponDto)
 		{
-			var responseDto = await _couponService.CreateAsync(couponDto);
-			return View(responseDto);
+			try
+			{
+				if (couponDto != null && ModelState.IsValid)
+				{
+					var responseDto = await _couponService.CreateAsync(couponDto);
+
+					if (responseDto.Success)
+					{
+						TempData["success"] = responseDto.Message;
+						return RedirectToAction(nameof(Create));
+					}
+					
+					TempData["error"] = responseDto.Message;
+					ModelState.AddModelError("", "Error: Could not create coupon");
+				}
+			}
+			catch (Exception ex)
+			{
+				TempData["error"] = ex.Message;
+			}
+
+			return View(couponDto);
 		}
 	}
 }

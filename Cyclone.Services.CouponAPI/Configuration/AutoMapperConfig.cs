@@ -13,7 +13,7 @@ namespace Cyclone.Services.CouponAPI.Configuration
 
 
         /*
-		 * Another method of configuration via dependency injection
+		 * Another method of mapper configuration via dependency injection package
 		 */
         //public static  MapperConfiguration RegisterMap() 
         //{

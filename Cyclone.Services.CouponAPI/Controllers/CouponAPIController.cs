@@ -2,12 +2,14 @@
 using Cyclone.Services.CouponAPI.Data;
 using Cyclone.Services.CouponAPI.DTO;
 using Cyclone.Services.CouponAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cyclone.Services.CouponAPI.Controllers
 {
 	[Route("api/CouponApi")]
+	[Authorize]
 	[ApiController]
 	public class CouponAPIController : ControllerBase
 	{
@@ -58,7 +60,6 @@ namespace Cyclone.Services.CouponAPI.Controllers
 				if (!string.IsNullOrEmpty(id))
 				{
 					response.Data = await _context.Coupons.FindAsync(Guid.Parse(id));
-					response.Message = "Created Successfully";
 					return Ok(response);
 				}
 
@@ -90,7 +91,6 @@ namespace Cyclone.Services.CouponAPI.Controllers
 				if (!string.IsNullOrEmpty(code))
 				{
 					response.Data = await _context.Coupons.FirstOrDefaultAsync(c => c.CouponCode == code);
-					response.Message = "Created Successfully";
 					return Ok(response);
 				}
 
@@ -114,7 +114,7 @@ namespace Cyclone.Services.CouponAPI.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<ActionResult> Post([FromBody] CouponDto model)
+		public async Task<ActionResult<ResponseDto>> Post([FromBody] CouponDto model)
 		{
 			var response = new ResponseDto();
 
@@ -127,8 +127,8 @@ namespace Cyclone.Services.CouponAPI.Controllers
 					await _context.Coupons.AddAsync(coupon);
 					await _context.SaveChangesAsync();
 
-					response.Message = "Updated Successfully";
-					return StatusCode(StatusCodes.Status201Created);
+					response.Message = "Created Successfully";
+					return Created(nameof(Post), response);
 				}
 
 				response.Success = false;
@@ -151,7 +151,7 @@ namespace Cyclone.Services.CouponAPI.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status205ResetContent)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<ActionResult> Put([FromBody] CouponDto model)
+		public async Task<ActionResult<ResponseDto>> Put([FromBody] CouponDto model)
 		{
 			var response = new ResponseDto();
 
@@ -165,7 +165,7 @@ namespace Cyclone.Services.CouponAPI.Controllers
 					_context.Coupons.Update(coupon);
 					await _context.SaveChangesAsync();
 
-					return StatusCode(StatusCodes.Status205ResetContent);
+					return StatusCode(StatusCodes.Status205ResetContent, response);
 				}
 
 				response.Success = false;
@@ -188,7 +188,7 @@ namespace Cyclone.Services.CouponAPI.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<IActionResult> DeleteById(string id)
+		public async Task<ActionResult<ResponseDto>> DeleteById(string id)
 		{
 			var response = new ResponseDto();
 
@@ -202,11 +202,11 @@ namespace Cyclone.Services.CouponAPI.Controllers
 					await _context.SaveChangesAsync();
 
 					response.Message = "Deleted Successfully";
-					return NoContent();
+					return StatusCode(StatusCodes.Status204NoContent, response);
 				}
 
 				response.Message = "Invalid Coupon code";
-				return NotFound();
+				return NotFound(response);
 			}
 			catch (Exception ex)
 			{
@@ -224,7 +224,7 @@ namespace Cyclone.Services.CouponAPI.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<IActionResult> DeleteByCode(string code)
+		public async Task<ActionResult<ResponseDto>> DeleteByCode(string code)
 		{
 			var response = new ResponseDto();
 
@@ -238,11 +238,11 @@ namespace Cyclone.Services.CouponAPI.Controllers
 					await _context.SaveChangesAsync();
 
 					response.Message = "Deleted Successfully";
-					return NoContent();
+					return StatusCode(StatusCodes.Status204NoContent, response);
 				}
 
 				response.Message = "Invalid Coupon code";
-				return NotFound();
+				return StatusCode(StatusCodes.Status404NotFound, response);
 			}
 			catch (Exception ex)
 			{

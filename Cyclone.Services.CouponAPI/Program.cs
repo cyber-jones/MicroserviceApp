@@ -1,7 +1,11 @@
 using AutoMapper;
 using Cyclone.Services.CouponAPI.Configuration;
 using Cyclone.Services.CouponAPI.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +15,7 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 		throw new Exception("Could not find connection string")));
 
 /*
- * Another method of configuration
+ * Another method of mapper configuration
  */
 //IMapper mapper = AutoMapperConfig.RegisterMap().CreateMapper();
 //builder.Services.AddSingleton(mapper);
@@ -22,7 +26,58 @@ builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization using the bearer scheme: `Enter Bearer [space] add key`",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = JwtBearerDefaults.AuthenticationScheme
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Id = JwtBearerDefaults.AuthenticationScheme,
+                    Type = ReferenceType.SecurityScheme
+                }
+            },
+            new List<string>()
+        }
+    });
+});
+
+
+var secret = builder.Configuration.GetValue<string>("ApiSettings:Secret");
+var issuer = builder.Configuration.GetValue<string>("ApiSettings:Issuer");
+var audience = builder.Configuration.GetValue<string>("ApiSettings:Audience");
+
+byte[] key = Encoding.ASCII.GetBytes(secret);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options => {
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+
+        ValidateIssuer = true,
+        ValidIssuer = issuer,
+
+        ValidateAudience = true,
+        ValidAudience = audience,
+    };
+});
 
 var app = builder.Build();
 
