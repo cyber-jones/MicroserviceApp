@@ -5,8 +5,8 @@ namespace Cyclone.RepositoryService.Implementation
 {
     public class TokenProvider : ITokenProvider
     {
-        private readonly HttpContextAccessor _contextAccessor;
-        public TokenProvider(HttpContextAccessor contextAccessor)
+        private readonly IHttpContextAccessor _contextAccessor;
+        public TokenProvider(IHttpContextAccessor contextAccessor)
         {
             _contextAccessor = contextAccessor; 
         }
@@ -21,22 +21,14 @@ namespace Cyclone.RepositoryService.Implementation
         public string? GetToken()
         {
             var cookie = string.Empty;
-            var hasCookie = _contextAccessor.HttpContext?.Request.Cookies.TryGetValue(SD.Cookie, out cookie);
+            var hasCookie = _contextAccessor.HttpContext?.Request.Cookies.TryGetValue(SD.Cookie!, out cookie);
             return hasCookie is true ? cookie : null;
         }
 
 
-        public bool SetToken(string token)
+        public void SetToken(string token)
         {
-            if (token != null)
-            {
-                _contextAccessor.HttpContext?.Response.Cookies.Append(SD.Cookie, token);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            _contextAccessor.HttpContext?.Response.Cookies.Append(SD.Cookie!, token);
         }
     }
 }

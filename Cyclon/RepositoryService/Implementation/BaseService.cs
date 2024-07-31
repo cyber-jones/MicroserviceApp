@@ -33,7 +33,7 @@ namespace Cyclone.RepositoryService.Implementation
 
 				if (requestDto.Data != null)
 				{
-					httpRequestMessage.Content = new StringContent(JsonConvert.SerializeObject(httpRequestMessage.Content), encoding: Encoding.UTF8, mediaType:"application/json");
+					httpRequestMessage.Content = new StringContent(JsonConvert.SerializeObject(requestDto.Data), encoding: Encoding.UTF8, mediaType:"application/json");
 				}
 
 				httpRequestMessage.Method = requestDto.ApiType switch

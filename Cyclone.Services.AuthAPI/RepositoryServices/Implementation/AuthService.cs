@@ -35,10 +35,12 @@ namespace Cyclone.Services.AuthAPI.RepositoryServices.Implementation
 
 
 
-        public async Task<UserDto?> LoginAsync(LoginRequestDto loginRequestDto)
+        public async Task<LoginResponseDto?> LoginAsync(LoginRequestDto loginRequestDto)
 		{
 			try
 			{
+				LoginResponseDto loginResponseDto = new();
+
 				var user = await _context.ApplicationUsers.FirstOrDefaultAsync(a => a.UserName == loginRequestDto.UserName);
 
 				if (user != null)
@@ -49,7 +51,7 @@ namespace Cyclone.Services.AuthAPI.RepositoryServices.Implementation
 					{
 						await _signInManager.SignInAsync(user, false);
 
-						return new UserDto()
+						var userDto = new UserDto()
 						{
 							Id = user.Id,
 							Name = user.Name,
@@ -57,10 +59,19 @@ namespace Cyclone.Services.AuthAPI.RepositoryServices.Implementation
 							Email = user.Email,
 							PhoneNumber = user.PhoneNumber
 						};
+
+						loginResponseDto.User = userDto;
+						return loginResponseDto;
+					}
+					else
+					{
+						loginResponseDto.Message = "Invalid password";
+						return loginResponseDto;
 					}
 				}
 
-				return null;
+				loginResponseDto.Message = "User not found";
+				return loginResponseDto;
 			}
 			catch (Exception ex)
 			{
@@ -113,7 +124,7 @@ namespace Cyclone.Services.AuthAPI.RepositoryServices.Implementation
 			}
 			catch (Exception ex) 
 			{
-				return ex.Message;
+				throw new Exception(ex.Message);
 			}
 		}
 

@@ -1,19 +1,26 @@
 ﻿using Cyclone.DTOs;
 using Cyclone.RepositoryService.Abstraction;
 using Cyclone.Utilities;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Cyclone.Controllers
 {
 	public class AuthController : Controller
 	{
 		private readonly IAuthService _authService;
+		private readonly ITokenProvider _tokenProvider;
 
-		public AuthController(IAuthService authService)
+		public AuthController(IAuthService authService, ITokenProvider tokenProvider)
 		{
 			_authService = authService;
+            _tokenProvider = tokenProvider;
 		}
 
 
@@ -39,13 +46,23 @@ namespace Cyclone.Controllers
 					{
 						TempData["success"] = responseDto.Message;
 
-                        var loginResponseDto = JsonConvert.DeserializeObject<LoginResponseDto>(Convert.ToString(responseDto));
+                        var loginResponseDto = JsonConvert.DeserializeObject<LoginResponseDto>(Convert.ToString(responseDto.Data));
 
-						return RedirectToAction("Index");
+                        if (loginResponseDto.Token != null)
+                        {
+                            await SigninAsync(loginResponseDto.Token);
+                            _tokenProvider.SetToken(loginResponseDto.Token);
+
+                            return RedirectToAction("Index", "Home");
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("", loginResponseDto.Message);
+                        }
                     }
                     else
                     {
-                        ModelState.AddModelError("CustomError", "Invalid Username or Password");
+                        ModelState.AddModelError("", responseDto.Message);
                     }
 				}
 
@@ -123,6 +140,10 @@ namespace Cyclone.Controllers
                             TempData["error"] = assignRole.Message;
                         }
                     }
+                    else
+                    {
+                        ModelState.AddModelError("", responseDto.Message);
+                    }
                 }
                 else
                 {
@@ -158,6 +179,57 @@ namespace Cyclone.Controllers
             }
 
             return RedirectToAction(nameof(Login));
+        }
+
+
+
+
+
+
+
+        public async Task<IActionResult> Logout()
+        {
+            try
+            {
+                await HttpContext.SignOutAsync();
+                _tokenProvider.ClearToken();
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
+
+
+
+
+
+
+
+
+
+
+
+        private async Task SigninAsync(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwt = tokenHandler.ReadJwtToken(token);
+
+            IEnumerable<Claim> claims =
+            [
+                new Claim(JwtRegisteredClaimNames.Name, jwt.Claims.FirstOrDefault(n => n.Type == JwtRegisteredClaimNames.Name).Value),
+                new Claim(JwtRegisteredClaimNames.Sub, jwt.Claims.FirstOrDefault(s => s.Type == JwtRegisteredClaimNames.Sub).Value),
+                new Claim(JwtRegisteredClaimNames.Email, jwt.Claims.FirstOrDefault(e => e.Type == JwtRegisteredClaimNames.Email).Value),
+                new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(n => n.Type == JwtRegisteredClaimNames.Email).Value)
+            ];
+
+            var claimsIdentity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
+            claimsIdentity.AddClaims(claims);
+
+            var claimPrinciple = new ClaimsPrincipal(claimsIdentity);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimPrinciple);
         }
     }
 }

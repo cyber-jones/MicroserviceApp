@@ -20,7 +20,7 @@ namespace Cyclone.RepositoryService.Implementation
 			return _baseService.SendAsync(new RequestDto()
 			{
 				ApiType = SD.ApiType.POST,
-				Url = SD.AuthApiUrl + "/login",
+				Url = SD.AuthApiUrl + "/api/Auth/login",
 				Data = loginRequestDto
 			});
 		}
@@ -31,7 +31,7 @@ namespace Cyclone.RepositoryService.Implementation
 			return _baseService.SendAsync(new RequestDto()
 			{
 				ApiType = SD.ApiType.POST,
-				Url = SD.AuthApiUrl + "/signup",
+				Url = SD.AuthApiUrl + "/api/Auth/signup",
 				Data = registrationRequestDto
 			});
 		}
@@ -44,7 +44,7 @@ namespace Cyclone.RepositoryService.Implementation
 			return _baseService.SendAsync(new RequestDto()
 			{
 				ApiType = SD.ApiType.POST,
-				Url = SD.AuthApiUrl + "/assignrole",
+				Url = SD.AuthApiUrl + "/api/Auth/assignrole",
 				Data = registrationRequestDto
 			});
 		}

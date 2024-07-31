@@ -32,36 +32,49 @@ namespace Cyclone.Services.AuthAPI.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginRequestDto loginRequestDto)
+		public async Task<ActionResult<ResponseDto>> Login([FromBody] LoginRequestDto loginRequestDto)
 		{
-			try
+            try
 			{
-				LoginResponseDto loginResponseDto = new();
+                ResponseDto responseDto = new();
 
-				if (loginRequestDto != null && ModelState.IsValid)
+                if (loginRequestDto != null && ModelState.IsValid)
 				{
-					var user = await _authService.LoginAsync(loginRequestDto);
+					var loginResponseDto = await _authService.LoginAsync(loginRequestDto);
 
-					if (user != null)
+					if (loginResponseDto.User != null)
 					{
 						//Generate Token 
-						var token = _tokenGenerator.GenerateToken(user);
+						var token = _tokenGenerator.GenerateToken(loginResponseDto.User);
 
-						loginResponseDto.User = user;
-						loginResponseDto.Token = token;
-
-						return Ok(loginResponseDto);
+						if (token != null)
+						{
+                            loginResponseDto.Token = token;
+                            responseDto.Data = loginResponseDto;
+                            return Ok(responseDto);
+                        }
 					}
 					else
 					{
-						return StatusCode(StatusCodes.Status401Unauthorized, loginResponseDto);
+						responseDto.Success = false;
+						responseDto.Message = loginResponseDto.Message;
+						return StatusCode(StatusCodes.Status401Unauthorized, responseDto);
 					}
 				}
-				return BadRequest(loginResponseDto);
+
+				responseDto.Message = "Invalid Username or Password";
+				responseDto.Success = false;
+				return BadRequest(responseDto);
 			}
 			catch (Exception ex)
 			{
-				return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+				ResponseDto responseDto = new()
+				{
+					Success = false,
+					Message = ex.Message,
+				};
+
+                return StatusCode(StatusCodes.Status500InternalServerError, responseDto);
 			}
 		}
 

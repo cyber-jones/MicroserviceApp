@@ -5,8 +5,11 @@ namespace Cyclone.DTOs
 	public class LoginRequestDto
 	{
 		[Required]
-		public string? UserName { get; set; }
+        [Display(Name = "Username")]
+        public string? UserName { get; set; }
 		[Required]
+		[Display( Name = "Password")]
+		[DataType(DataType.Password)]
 		public string? Password { get; set; }
 	}
 }
