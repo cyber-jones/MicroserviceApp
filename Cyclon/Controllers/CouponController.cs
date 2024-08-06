@@ -1,5 +1,6 @@
 ﻿using Cyclone.DTOs;
 using Cyclone.RepositoryService.Abstraction;
+using Cyclone.RepositoryService.Implementation;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -49,6 +50,7 @@ namespace Cyclone.Controllers
 
 
 
+
 		[HttpPost]
 		public async Task<IActionResult> Create(CouponDto couponDto)
 		{
@@ -80,7 +82,7 @@ namespace Cyclone.Controllers
 
 
 
-		[HttpPost]
+
 		public async Task<IActionResult> Delete(string id)
 		{
 			try

@@ -83,9 +83,78 @@ namespace Cyclone.Controllers
 
 
 
+		public async Task<IActionResult> Edit(string id)
+		{
+			try
+			{
+				if (!string.IsNullOrEmpty(id))
+				{
+					var responseDto = await _productService.GetByIdAsync(id);
+
+					if (responseDto.Success)
+					{
+						var product = JsonConvert.DeserializeObject<ProductDto>(Convert.ToString(responseDto.Data));
+						return View(product);
+					}
+
+					TempData["error"] = responseDto.Message;
+				}
+
+				TempData["error"] = "Faild to perform acton";
+			}
+			catch (Exception ex)
+			{
+				TempData["error"] = ex.Message;
+			}
+
+			return RedirectToAction(nameof(Index));
+		}
+
+
 
 
 		[HttpPost]
+		public async Task<IActionResult> Edit(ProductDto productDto, string id)
+		{
+			try
+			{
+				if (productDto != null && ModelState.IsValid && !string.IsNullOrEmpty(id))
+				{
+					var responseDto = await _productService.GetByIdAsync(id);
+
+					if (responseDto.Success)
+					{
+						var responseDto2 = await _productService.UpdateAsync(productDto);
+
+						if (responseDto2.Success)
+						{
+							TempData["success"] = responseDto2.Message;
+							return RedirectToAction(nameof(Index));
+						}
+
+						TempData["error"] = responseDto2.Message;
+					}
+					
+					TempData["error"] = responseDto.Message;
+				}
+
+				ModelState.AddModelError("", "Error: Could not update product");
+			}
+			catch (Exception ex)
+			{
+				TempData["error"] = ex.Message;
+			}
+
+			return View(productDto);
+		}
+
+
+
+
+
+
+
+
 		public async Task<IActionResult> Delete(string id)
 		{
 			try
