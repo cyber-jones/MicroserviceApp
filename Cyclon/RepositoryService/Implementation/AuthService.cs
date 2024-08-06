@@ -22,7 +22,7 @@ namespace Cyclone.RepositoryService.Implementation
 				ApiType = SD.ApiType.POST,
 				Url = SD.AuthApiUrl + "/api/Auth/login",
 				Data = loginRequestDto
-			});
+			}, false);
 		}
 
 
@@ -33,7 +33,7 @@ namespace Cyclone.RepositoryService.Implementation
 				ApiType = SD.ApiType.POST,
 				Url = SD.AuthApiUrl + "/api/Auth/signup",
 				Data = registrationRequestDto
-			});
+			}, false);
 		}
 
 

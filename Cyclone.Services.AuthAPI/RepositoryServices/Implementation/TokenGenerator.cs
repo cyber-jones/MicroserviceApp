@@ -25,7 +25,7 @@ namespace Cyclone.Services.AuthAPI.RepositoryServices.Implementation
         public string GenerateToken(UserDto user)
 		{
 			var tokenHandler = new JwtSecurityTokenHandler();
-			var key = Encoding.ASCII.GetBytes(_jwtOptions.Secret);
+			byte[] key = Encoding.ASCII.GetBytes(_jwtOptions.Secret);
 
 			var claimList = new List<Claim>()
 			{

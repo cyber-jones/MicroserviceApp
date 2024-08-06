@@ -4,35 +4,38 @@
 
 
 
-<form >
+<form method="post" >
     <br />
     <div class="container border p-3">
         <h1 class="text-white text-center">Create Coupon</h1>
 
         <hr />
+        <div class="mt-3 text-danger" asp-validation-summary="All"></div>
         <div class="row">
             <div class="col-2">
-                <label  class="control-label pt-2" style="font-size:20px;"></label>
+                <label asp-for="CouponCode"  class="control-label pt-2" style="font-size:20px;"></label>
             </div>
             <div class="col-10 pb-3">
-                <input  class="form-control" />
+                <input asp-for="CouponCode"  class="form-control" />
+                <span class="text-danger" asp-validation-for="CouponCode"></span>
             </div>
             <div class="col-2">
-                <label  class="control-label pt-2" style="font-size:20px;"></label>
+                <label asp-for="DiscountAmount"  class="control-label pt-2" style="font-size:20px;"></label>
             </div>
             <div class="col-10 pb-3">
-                <input class="form-control" />
+                <input asp-for="DiscountAmount" class="form-control" />
+                <span class="text-danger" asp-validation-for="DiscountAmount"></span>
             </div>
             <div class="col-2">
-                <label  class="control-label pt-2" style="font-size:20px;"></label>
+                <label asp-for="MinAmount" class="control-label pt-2" style="font-size:20px;"></label>
             </div>
             <div class="col-10 pb-3">
-                <input class="form-control" />
+                <input asp-for="MinAmount" class="form-control" />
+                <span class="text-danger" asp-validation-for="MinAmount"></span>
             </div>
             
             <div class="col-5 offset-2">
-
-                <a  class="btn-primary btn form-control ">Back to List</a>
+                <a asp-action="Index" class="btn-primary btn form-control ">Back to List</a>
             </div>
             <div class="col-5">
                 <input type="submit" value="Create" class="btn btn-success form-control" />
@@ -44,3 +47,16 @@
         </div>
     </div>
 </form>
+
+
+
+
+
+
+
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

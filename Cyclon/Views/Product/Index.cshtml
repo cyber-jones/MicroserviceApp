@@ -1,4 +1,6 @@
-﻿@model IEnumerable<CouponDto>
+﻿@model IEnumerable<ProductDto>
+
+
 
 
 
@@ -7,7 +9,7 @@
 	<div class="card-header bg-secondary bg-gradient ml-0 py-3">
 		<div class="row">
 			<div class="col-12 text-center">
-				<h1 class="text-white">Coupons List</h1>
+				<h1 class="text-white">Products List</h1>
 			</div>
 		</div>
 	</div>
@@ -16,7 +18,7 @@
 			<div class="col-6">
 			</div>
 			<div class="col-6 text-end">
-				<a class="btn btn-outline-primary" asp-action="Create"><i class="bi bi-plus-square"></i> Create New Coupon</a>
+				<a asp-action="Create" class="btn btn-outline-primary"><i class="bi bi-plus-square"></i> Create New Product</a>
 
 			</div>
 		</div>
@@ -24,32 +26,40 @@
 			<thead>
 				<tr>
 					<th>
-						Coupon Code
+						Name
 					</th>
 					<th>
-						Discount Amount
+						Category Name
 					</th>
 					<th>
-						Minimum Amount
+						Price
 					</th>
 					<th></th>
 				</tr>
 			</thead>
 			<tbody>
-				@foreach(var coupon in Model)
+				@foreach (var item in Model)
 				{
 					<tr>
-						<td>@coupon.CouponCode</td>
-						<td>@coupon.DiscountAmount.ToString("C")</td>
-						<td>@coupon.MinAmount.ToString("C")</td>
 						<td>
-							<a class="btn btn-danger" asp-action="Delete">
+							@item.Name
+						</td>
+						<td>
+							@item.CategoryName
+						</td>
+						<td>
+							@item.Price.ToString("C")
+						</td>
+						<td>
+							<a asp-action="Edit" class="btn btn-success">
+								<i class="bi bi-pencil-square"></i>
+							</a>
+							<a asp-action="Delete" class="btn btn-danger">
 								<i class="bi bi-trash"></i>
 							</a>
 						</td>
 					</tr>
 				}
-
 			</tbody>
 		</table>
 

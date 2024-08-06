@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Cyclone.Services.CouponAPI.Data
 {
-	public class ApplicationDBContext: DbContext
+	public class CouponDBContext: DbContext
 	{
-        public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options): base(options)
+        public CouponDBContext(DbContextOptions<CouponDBContext> options): base(options)
         {
         }
 

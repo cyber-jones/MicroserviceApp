@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Cyclone.Services.CouponAPI.Migrations
 {
-    [DbContext(typeof(ApplicationDBContext))]
+    [DbContext(typeof(CouponDBContext))]
     [Migration("20240707162915_Mag01")]
     partial class Mag01
     {

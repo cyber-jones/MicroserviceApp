@@ -16,8 +16,7 @@ builder.Services.AddDbContext<AuthDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("default")));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-	.AddEntityFrameworkStores<AuthDbContext>()
-	.AddDefaultTokenProviders();
+	.AddEntityFrameworkStores<AuthDbContext>();
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
 

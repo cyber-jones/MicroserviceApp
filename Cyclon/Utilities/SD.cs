@@ -4,6 +4,7 @@
 	{
 		public static string? CouponApiUrl { get; set; }
 		public static string? AuthApiUrl { get; set; }
+		public static string? ProductUrl { get; set; }
 		public static string? Admin { get; set; } = "ADMIN";
 		public static string? Employee { get; set; } = "EMPLOYEE";
 		public static string? Company { get; set; } = "COMPANY";

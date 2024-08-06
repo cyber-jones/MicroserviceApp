@@ -5,14 +5,15 @@ using Newtonsoft.Json;
 
 namespace Cyclone.Controllers
 {
-	public class CouponController : Controller
+	public class ProductController : Controller
 	{
-		private ICouponService _couponService;
+		private IProductService _productService;
 
-        public CouponController(ICouponService couponService)
+        public ProductController(IProductService productService)
         {
-            _couponService = couponService;	
+			_productService = productService;	
         }
+
 
 
 
@@ -21,12 +22,12 @@ namespace Cyclone.Controllers
 		{
 			try
 			{
-				var responseDto = await _couponService.GetAllAsync();
+				var responseDto = await _productService.GetAllAsync();
 
 				if (responseDto.Success == true && responseDto.Data != null)
 				{
-					List<CouponDto> coupons = JsonConvert.DeserializeObject<List<CouponDto>>(Convert.ToString(responseDto.Data));
-					return View(coupons);
+					List<ProductDto> products = JsonConvert.DeserializeObject<List<ProductDto>>(Convert.ToString(responseDto.Data));
+					return View(products);
 				}
 
 				TempData["error"] = responseDto.Message;
@@ -42,6 +43,7 @@ namespace Cyclone.Controllers
 
 
 
+
 		public IActionResult Create()
 		{
 			return View();
@@ -49,14 +51,15 @@ namespace Cyclone.Controllers
 
 
 
+
 		[HttpPost]
-		public async Task<IActionResult> Create(CouponDto couponDto)
+		public async Task<IActionResult> Create(ProductDto productDto)
 		{
 			try
 			{
-				if (couponDto != null && ModelState.IsValid)
+				if (productDto != null && ModelState.IsValid)
 				{
-					var responseDto = await _couponService.CreateAsync(couponDto);
+					var responseDto = await _productService.CreateAsync(productDto);
 
 					if (responseDto.Success)
 					{
@@ -73,8 +76,10 @@ namespace Cyclone.Controllers
 				TempData["error"] = ex.Message;
 			}
 
-			return View(couponDto);
+			return View(productDto);
 		}
+
+
 
 
 
@@ -85,9 +90,9 @@ namespace Cyclone.Controllers
 		{
 			try
 			{
-				if (id != null) 
+				if (id != null)
 				{
-					var responseDto = await _couponService.DeleteByIdAsync(id);
+					var responseDto = await _productService.DeleteByIdAsync(id);
 					if (responseDto.Success)
 					{
 						TempData["success"] = responseDto.Message;
@@ -98,7 +103,7 @@ namespace Cyclone.Controllers
 
 				TempData["error"] = "Faild to perform action";
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				TempData["error"] = ex.Message;
 			}

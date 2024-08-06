@@ -1,26 +1,26 @@
 ﻿using AutoMapper;
-using Cyclone.Services.CouponAPI.Data;
-using Cyclone.Services.CouponAPI.DTO;
-using Cyclone.Services.CouponAPI.Models;
-using Microsoft.AspNetCore.Authorization;
+using Cyclone.Services.ProductAPI.Data;
+using Cyclone.Services.ProductAPI.DTO;
+using Cyclone.Services.ProductAPI.DTOs;
+using Cyclone.Services.ProductAPI.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cyclone.Services.CouponAPI.Controllers
+namespace Cyclone.Services.ProductAPI.Controllers
 {
-	[Route("api/CouponApi")]
-	[Authorize]
+	[Route("api/[controller]")]
 	[ApiController]
-	public class CouponAPIController : ControllerBase
+	public class ProductAPIController : ControllerBase
 	{
-		private readonly CouponDBContext _context;
+		private readonly ProductDbContext _context;
 		private readonly IMapper _mapper;
 
-        public CouponAPIController(CouponDBContext context, IMapper mapper)
-        {
-            _context = context;
-            _mapper = mapper;
-        }
+		public ProductAPIController(ProductDbContext context, IMapper mapper)
+		{
+			_context = context;
+			_mapper = mapper;
+		}
 
 
 
@@ -33,7 +33,7 @@ namespace Cyclone.Services.CouponAPI.Controllers
 
 			try
 			{
-				response.Data = await _context.Coupons.ToListAsync();
+				response.Data = await _context.Products.ToListAsync();
 				return Ok(response);
 			}
 			catch (Exception ex)
@@ -59,7 +59,7 @@ namespace Cyclone.Services.CouponAPI.Controllers
 			{
 				if (!string.IsNullOrEmpty(id))
 				{
-					response.Data = await _context.Coupons.FindAsync(Guid.Parse(id));
+					response.Data = await _context.Products.FindAsync(Guid.Parse(id));
 					return Ok(response);
 				}
 
@@ -78,19 +78,19 @@ namespace Cyclone.Services.CouponAPI.Controllers
 
 
 
-		[HttpGet("{code}", Name = "GetByCode")]
+		[HttpGet("{name}", Name = "GetByName")]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<ActionResult<ResponseDto>> GetByCode(string code)
+		public async Task<ActionResult<ResponseDto>> GetByCode(string name)
 		{
 			var response = new ResponseDto();
 
 			try
 			{
-				if (!string.IsNullOrEmpty(code))
+				if (!string.IsNullOrEmpty(name))
 				{
-					response.Data = await _context.Coupons.FirstOrDefaultAsync(c => c.CouponCode == code);
+					response.Data = await _context.Products.FirstOrDefaultAsync(c => c.Name.ToLower() == name.ToLower());
 					return Ok(response);
 				}
 
@@ -114,7 +114,7 @@ namespace Cyclone.Services.CouponAPI.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<ActionResult<ResponseDto>> Post([FromBody] CouponDto model)
+		public async Task<ActionResult<ResponseDto>> Post([FromBody] ProductDto model)
 		{
 			var response = new ResponseDto();
 
@@ -122,9 +122,9 @@ namespace Cyclone.Services.CouponAPI.Controllers
 			{
 				if (model != null && ModelState.IsValid)
 				{
-					var coupon = _mapper.Map<Coupon>(model);
+					var coupon = _mapper.Map<Product>(model);
 
-					await _context.Coupons.AddAsync(coupon);
+					await _context.Products.AddAsync(coupon);
 					await _context.SaveChangesAsync();
 
 					response.Message = "Created Successfully";
@@ -151,7 +151,7 @@ namespace Cyclone.Services.CouponAPI.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status205ResetContent)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<ActionResult<ResponseDto>> Put([FromBody] CouponDto model)
+		public async Task<ActionResult<ResponseDto>> Put([FromBody] ProductDto model)
 		{
 			var response = new ResponseDto();
 
@@ -159,10 +159,10 @@ namespace Cyclone.Services.CouponAPI.Controllers
 			{
 				if (model != null && ModelState.IsValid)
 				{
-					var couponDb = await _context.Coupons.AsNoTracking().FirstOrDefaultAsync(c => c.CouponId == model.CouponId);
-					var coupon = _mapper.Map<Coupon>(model);
+					var couponDb = await _context.Products.AsNoTracking().FirstOrDefaultAsync(c => c.ProductId == model.ProductId);
+					var product = _mapper.Map<Product>(model);
 
-					_context.Coupons.Update(coupon);
+					_context.Products.Update(product);
 					await _context.SaveChangesAsync();
 
 					return StatusCode(StatusCodes.Status205ResetContent, response);
@@ -194,18 +194,18 @@ namespace Cyclone.Services.CouponAPI.Controllers
 
 			try
 			{
-				var couponDb = await _context.Coupons.FindAsync(Guid.Parse(id));
+				var couponDb = await _context.Products.FindAsync(Guid.Parse(id));
 
 				if (couponDb != null)
 				{
-					_context.Coupons.Remove(couponDb);
+					_context.Products.Remove(couponDb);
 					await _context.SaveChangesAsync();
 
 					response.Message = "Deleted Successfully";
 					return StatusCode(StatusCodes.Status204NoContent, response);
 				}
 
-				response.Message = "Invalid Coupon code";
+				response.Message = "Product not found";
 				return NotFound(response);
 			}
 			catch (Exception ex)
@@ -216,40 +216,5 @@ namespace Cyclone.Services.CouponAPI.Controllers
 			}
 		}
 
-
-
-
-
-		[HttpDelete("{code}", Name = "DeleteByCode")]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-		[ProducesResponseType(StatusCodes.Status204NoContent)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<ResponseDto>> DeleteByCode(string code)
-		{
-			var response = new ResponseDto();
-
-			try
-			{
-				var couponDb = await _context.Coupons.FirstOrDefaultAsync(c => c.CouponCode == code);
-
-				if (couponDb != null)
-				{
-					_context.Coupons.Remove(couponDb);
-					await _context.SaveChangesAsync();
-
-					response.Message = "Deleted Successfully";
-					return StatusCode(StatusCodes.Status204NoContent, response);
-				}
-
-				response.Message = "Invalid Coupon code";
-				return StatusCode(StatusCodes.Status404NotFound, response);
-			}
-			catch (Exception ex)
-			{
-				response.Success = false;
-				response.Message = ex.Message;
-				return StatusCode(StatusCodes.Status500InternalServerError, response);
-			}
-		}
 	}
 }

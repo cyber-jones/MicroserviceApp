@@ -10,7 +10,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<ApplicationDBContext>(options =>
+builder.Services.AddDbContext<CouponDBContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("default") ??
 		throw new Exception("Could not find connection string")));
 
