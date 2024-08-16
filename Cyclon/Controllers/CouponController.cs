@@ -37,7 +37,7 @@ namespace Cyclone.Controllers
 				TempData["error"] = ex.Message;
 			}
 
-			return View(null);
+			return Redirect("Home/Index");
 		}
 
 
@@ -90,15 +90,20 @@ namespace Cyclone.Controllers
 				if (id != null) 
 				{
 					var responseDto = await _couponService.DeleteByIdAsync(id);
+
 					if (responseDto.Success)
 					{
 						TempData["success"] = responseDto.Message;
 					}
-
-					TempData["error"] = responseDto.Message;
+					else
+					{
+						TempData["error"] = responseDto.Message;
+					}
 				}
-
-				TempData["error"] = "Faild to perform action";
+				else
+				{
+					TempData["error"] = "Faild to perform action";
+				}
 			}
 			catch(Exception ex)
 			{

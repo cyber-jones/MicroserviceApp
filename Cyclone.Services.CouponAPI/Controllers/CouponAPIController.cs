@@ -128,7 +128,7 @@ namespace Cyclone.Services.CouponAPI.Controllers
 					await _context.SaveChangesAsync();
 
 					response.Message = "Created Successfully";
-					return Created(nameof(Post), response);
+					return CreatedAtAction(nameof(GetById), new { id = coupon.CouponId }, response);
 				}
 
 				response.Success = false;

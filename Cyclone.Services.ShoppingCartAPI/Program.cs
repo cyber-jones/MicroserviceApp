@@ -1,5 +1,5 @@
-using Cyclone.Services.ProductAPI.Config;
-using Cyclone.Services.ProductAPI.Data;
+using Cyclone.Services.ShoppingCartAPI.Config;
+using Cyclone.Services.ShoppingCartAPI.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -9,7 +9,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<ProductDbContext>(options => 
+builder.Services.AddDbContext<CartDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("default") ??
 		throw new Exception("Could not find connection string")));
 
@@ -93,16 +93,13 @@ app.Run();
 
 
 
-
 void ApplyMigration()
 {
-	using (var scope = app.Services.CreateScope())
-	{
-		var _db = scope.ServiceProvider.GetService<ProductDbContext>();
+	using var scope = app.Services.CreateScope();
+	var _db = scope.ServiceProvider.GetService<CartDbContext>();
 
-		if (_db.Database.GetPendingMigrations().Any())
-		{
-			_db.Database.Migrate();
-		}
+	if (_db.Database.GetPendingMigrations().Any())
+	{
+		_db.Database.Migrate();
 	}
 }

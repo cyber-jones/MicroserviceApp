@@ -37,7 +37,7 @@ namespace Cyclone.Controllers
 				TempData["error"] = ex.Message;
 			}
 
-			return View(null);
+			return Redirect("Home/Index");
 		}
 
 
@@ -69,7 +69,7 @@ namespace Cyclone.Controllers
 					
 					TempData["error"] = responseDto.Message;
 					ModelState.AddModelError("", "Error: Could not create coupon");
-				}
+				} 
 			}
 			catch (Exception ex)
 			{
@@ -99,8 +99,10 @@ namespace Cyclone.Controllers
 
 					TempData["error"] = responseDto.Message;
 				}
-
-				TempData["error"] = "Faild to perform acton";
+				else
+				{
+					TempData["error"] = "Faild to perform acton";
+				}
 			}
 			catch (Exception ex)
 			{
@@ -109,6 +111,7 @@ namespace Cyclone.Controllers
 
 			return RedirectToAction(nameof(Index));
 		}
+
 
 
 
@@ -133,12 +136,12 @@ namespace Cyclone.Controllers
 						}
 
 						TempData["error"] = responseDto2.Message;
+						return View(productDto);
 					}
 					
 					TempData["error"] = responseDto.Message;
+					ModelState.AddModelError("", "Error: Could not update product");
 				}
-
-				ModelState.AddModelError("", "Error: Could not update product");
 			}
 			catch (Exception ex)
 			{
@@ -165,12 +168,15 @@ namespace Cyclone.Controllers
 					if (responseDto.Success)
 					{
 						TempData["success"] = responseDto.Message;
+						return RedirectToAction(nameof(Index));
 					}
 
 					TempData["error"] = responseDto.Message;
 				}
-
-				TempData["error"] = "Faild to perform action";
+				else
+				{
+					TempData["error"] = "Faild to perform action";
+				}
 			}
 			catch (Exception ex)
 			{

@@ -1,0 +1,6 @@
+@Cyclone.Services.ShoppingCartAPI_HostAddress = http://localhost:5146
+
+GET {{Cyclone.Services.ShoppingCartAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

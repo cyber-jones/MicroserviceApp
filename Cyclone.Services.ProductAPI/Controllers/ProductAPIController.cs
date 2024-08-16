@@ -3,13 +3,14 @@ using Cyclone.Services.ProductAPI.Data;
 using Cyclone.Services.ProductAPI.DTO;
 using Cyclone.Services.ProductAPI.DTOs;
 using Cyclone.Services.ProductAPI.Models;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cyclone.Services.ProductAPI.Controllers
 {
 	[Route("api/[controller]")]
+	[Authorize]
 	[ApiController]
 	public class ProductAPIController : ControllerBase
 	{
@@ -95,7 +96,7 @@ namespace Cyclone.Services.ProductAPI.Controllers
 				}
 
 				response.Success = false;
-				response.Message = "Invalid coupon code";
+				response.Message = "Invalid product name";
 				return StatusCode(StatusCodes.Status400BadRequest, response);
 			}
 			catch (Exception ex)
@@ -122,13 +123,13 @@ namespace Cyclone.Services.ProductAPI.Controllers
 			{
 				if (model != null && ModelState.IsValid)
 				{
-					var coupon = _mapper.Map<Product>(model);
+					var product = _mapper.Map<Product>(model);
 
-					await _context.Products.AddAsync(coupon);
+					await _context.Products.AddAsync(product);
 					await _context.SaveChangesAsync();
 
 					response.Message = "Created Successfully";
-					return Created(nameof(Post), response);
+					return CreatedAtAction(nameof(GetById), new { id = product.ProductId }, response);
 				}
 
 				response.Success = false;
@@ -202,7 +203,7 @@ namespace Cyclone.Services.ProductAPI.Controllers
 					await _context.SaveChangesAsync();
 
 					response.Message = "Deleted Successfully";
-					return StatusCode(StatusCodes.Status204NoContent, response);
+					return Ok(response);
 				}
 
 				response.Message = "Product not found";
