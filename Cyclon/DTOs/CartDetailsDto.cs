@@ -1,9 +1,6 @@
-﻿using Cyclone.Services.ShoppingCartAPI.Models;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Cyclone.Services.ShoppingCartAPI.DTOs
+namespace Cyclone.DTOs
 {
 	public class CartDetailsDto
 	{

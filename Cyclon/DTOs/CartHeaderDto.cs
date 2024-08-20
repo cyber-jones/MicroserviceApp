@@ -1,8 +1,6 @@
-﻿
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Cyclone.Services.ShoppingCartAPI.DTOs
+namespace Cyclone.DTOs
 {
 	public class CartHeaderDto
 	{

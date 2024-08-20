@@ -16,16 +16,18 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
 	{
 		private readonly CartDbContext _context;
 		private readonly IMapper _mapper;
-        public CartAPIController(CartDbContext cartDbContext)
+        public CartAPIController(CartDbContext cartDbContext, IMapper mapper)
         {
             _context = cartDbContext;
+			_mapper = mapper;
         }
 
 
 
-        [HttpGet]
+        [HttpGet("{userId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<ActionResult<ResponseDto>> GetCart(string userId)
 		{
 			try
@@ -35,7 +37,7 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
 
 				if (cartHeader != null && !string.IsNullOrEmpty(userId))
 				{
-					var cartsDetails = await _context.CartDetails.FirstOrDefaultAsync(u => u.CartHeaderId == cartHeader.CartHeaderId);
+					var cartsDetails =  _context.CartDetails.Where(u => u.CartHeaderId == cartHeader.CartHeaderId);
 
 					CartDto cartDto = new()
 					{
@@ -53,8 +55,9 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
 					return Ok(responseDto);
 				}
 
+				responseDto.Success = false;
 				responseDto.Message = "Empty cart";
-				return Ok(responseDto);
+				return BadRequest(responseDto);
 				
 			}
 			catch (Exception ex)
@@ -74,6 +77,7 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
 
 
 
+
 		[HttpPost("CartUpsert")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
@@ -85,6 +89,7 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
 			{
 				ResponseDto responseDto = new();
 				var cartHeaderFromDb = await _context.CartHeaders.AsNoTracking().FirstOrDefaultAsync(u => u.UserId == cartDto.CartHeaderDto.UserId);
+
 				if (cartHeaderFromDb == null)
 				{
 					CartHeader cartHeader = _mapper.Map<CartHeader>(cartDto.CartHeaderDto);
@@ -136,5 +141,52 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
 				return StatusCode(StatusCodes.Status500InternalServerError, responseDto);
 			}
 		}
-	}
+
+
+
+
+
+
+
+
+
+
+
+        [HttpPost("RemoveCart")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ResponseDto>> RemoveCart([FromBody] string cartDetailsId)
+        {
+            try
+            {
+                ResponseDto responseDto = new();
+                CartDetails cartDetails = await _context.CartDetails.FirstOrDefaultAsync(c => c.CartDetailsId == Guid.Parse(cartDetailsId));
+
+                int cartCount = await _context.CartDetails.CountAsync();
+                _context.CartDetails.Remove(cartDetails);
+
+                if (cartCount == 1)
+                {
+                    CartHeader cartHeader = await _context.CartHeaders.FirstOrDefaultAsync(c => c.CartHeaderId == cartDetails.CartHeaderId);
+                    _context.CartHeaders.Remove(cartHeader);
+                }
+
+                await _context.SaveChangesAsync();
+                responseDto.Message = "Produc removed from cart";
+
+                return StatusCode(StatusCodes.Status204NoContent, responseDto);
+            }
+            catch (Exception ex)
+            {
+                ResponseDto responseDto = new()
+                {
+                    Success = false,
+                    Message = ex.Message
+                };
+
+                return StatusCode(StatusCodes.Status500InternalServerError, responseDto);
+            }
+        }
+    }
 }

@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Cyclone.Services.ProductAPI.Controllers
 {
 	[Route("api/[controller]")]
-	[Authorize]
 	[ApiController]
 	public class ProductAPIController : ControllerBase
 	{
@@ -83,7 +82,7 @@ namespace Cyclone.Services.ProductAPI.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public async Task<ActionResult<ResponseDto>> GetByCode(string name)
+		public async Task<ActionResult<ResponseDto>> GetByName(string name)
 		{
 			var response = new ResponseDto();
 
@@ -91,7 +90,7 @@ namespace Cyclone.Services.ProductAPI.Controllers
 			{
 				if (!string.IsNullOrEmpty(name))
 				{
-					response.Data = await _context.Products.FirstOrDefaultAsync(c => c.Name.ToLower() == name.ToLower());
+					response.Data = await _context.Products.FirstOrDefaultAsync(c => c.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase));
 					return Ok(response);
 				}
 
@@ -110,8 +109,8 @@ namespace Cyclone.Services.ProductAPI.Controllers
 
 
 
-
-		[HttpPost]
+        [Authorize]
+        [HttpPost]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -147,8 +146,8 @@ namespace Cyclone.Services.ProductAPI.Controllers
 
 
 
-
-		[HttpPut]
+        [Authorize]
+        [HttpPut]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status205ResetContent)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -184,8 +183,8 @@ namespace Cyclone.Services.ProductAPI.Controllers
 
 
 
-
-		[HttpDelete("{id:guid}", Name = "DeleteById")]
+        [Authorize]
+        [HttpDelete("{id:guid}", Name = "DeleteById")]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]

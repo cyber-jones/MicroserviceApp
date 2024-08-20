@@ -1,4 +1,4 @@
-﻿namespace Cyclone.Services.ShoppingCartAPI.DTOs
+﻿namespace Cyclone.DTOs
 {
 	public class CartDto
 	{

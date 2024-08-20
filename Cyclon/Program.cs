@@ -11,6 +11,7 @@ builder.Services.AddControllersWithViews();
 SD.CouponApiUrl = builder.Configuration["ServiceUrls:CouponUrl"];
 SD.AuthApiUrl = builder.Configuration["ServiceUrls:AuthApiUrl"];
 SD.ProductUrl = builder.Configuration["ServiceUrls:ProductUrl"];
+SD.CartUrl = builder.Configuration["ServiceUrls:CartUrl"];
 
 
 builder.Services.AddHttpContextAccessor();
