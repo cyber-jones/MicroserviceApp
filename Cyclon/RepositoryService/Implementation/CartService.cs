@@ -21,7 +21,7 @@ namespace Cyclone.RepositoryService.Implementation
         {
             return await _baseService.SendAsync(new RequestDto()
             {
-                Url = SD.CartUrl + "/api/CartAPI/CartUpsert",
+                Url = SD.CartUrl + "/api/CartAPI/",
                 ApiType = SD.ApiType.POST,
                 Data = product
             });

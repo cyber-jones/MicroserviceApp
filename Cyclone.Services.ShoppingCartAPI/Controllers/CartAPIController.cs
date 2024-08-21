@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using Cyclone.Services.ShoppingCartAPI.Data;
-using Cyclone.Services.ShoppingCartAPI.DTO;
 using Cyclone.Services.ShoppingCartAPI.DTOs;
 using Cyclone.Services.ShoppingCartAPI.Models;
+using Cyclone.Services.ShoppingCartAPI.RepositoryServices.Abstraction;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Reflection.PortableExecutable;
 
 namespace Cyclone.Services.ShoppingCartAPI.Controllers
@@ -16,11 +17,24 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
 	{
 		private readonly CartDbContext _context;
 		private readonly IMapper _mapper;
-        public CartAPIController(CartDbContext cartDbContext, IMapper mapper)
+		private readonly IProductService _productService;
+		private readonly ICouponService _couponService;
+
+
+        public CartAPIController(
+			CartDbContext cartDbContext, 
+			IMapper mapper, 
+			IProductService productService, 
+			ICouponService couponService
+		)
         {
             _context = cartDbContext;
 			_mapper = mapper;
+			_productService = productService;
+			_couponService = couponService;
         }
+
+
 
 
 
@@ -45,10 +59,32 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
 						CartDetailsDto = _mapper.Map<IEnumerable<CartDetailsDto>>(cartsDetails)
 					};
 
+					var responseProduct = await _productService.GetProducts();
+					if (!responseProduct.Success)
+						return StatusCode(StatusCodes.Status500InternalServerError, responseProduct);
+
+					var products = JsonConvert.DeserializeObject<IEnumerable<ProductDto>>(Convert.ToString(responseProduct.Data));
+
 					foreach (var items in cartDto.CartDetailsDto)
 					{
+						items.ProductDto = products.FirstOrDefault(p => p.ProductId == items.ProductId);
 						cartDto.CartHeaderDto.CartTotal += (items.Count * items.ProductDto.Price);
 					}
+
+					if (!string.IsNullOrEmpty(cartDto.CartHeaderDto.CouponCode))
+					{
+                        var responseCoupon = await _couponService.GetCoupon(cartDto.CartHeaderDto.CouponCode);
+                        if (!responseProduct.Success)
+                            return StatusCode(StatusCodes.Status500InternalServerError, responseCoupon);
+
+                        var coupon = JsonConvert.DeserializeObject<CouponDto>(Convert.ToString(responseCoupon.Data));
+
+                        if (cartDto.CartHeaderDto.CartTotal > coupon.MinAmount)
+						{
+							cartDto.CartHeaderDto.Discount = coupon.DiscountAmount;
+							cartDto.CartHeaderDto.CartTotal -= coupon.DiscountAmount;
+						}
+                    }
 
 					responseDto.Data = cartDto;
 
@@ -102,7 +138,7 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
 					await _context.SaveChangesAsync();
 
 					responseDto.Message = "New item added to cart";
-					return CreatedAtAction(nameof(GetCart), new { id = cartHeader.UserId }, responseDto);
+					return CreatedAtAction(nameof(GetCart), new { userId = cartHeader.UserId }, responseDto);
 				}
 				else
 				{
@@ -116,7 +152,7 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
 						await _context.CartDetails.AddAsync(_mapper.Map<CartDetails>(cartDto.CartDetailsDto.First()));
 						await _context.SaveChangesAsync();
 						responseDto.Message = "Item added to cart";
-						return CreatedAtAction(nameof(GetCart), new { id = cartHeaderFromDb.UserId }, responseDto);
+						return CreatedAtAction(nameof(GetCart), new { userId = cartHeaderFromDb.UserId }, responseDto);
 					}
 					else
 					{
@@ -176,6 +212,56 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
                 responseDto.Message = "Produc removed from cart";
 
                 return StatusCode(StatusCodes.Status204NoContent, responseDto);
+            }
+            catch (Exception ex)
+            {
+                ResponseDto responseDto = new()
+                {
+                    Success = false,
+                    Message = ex.Message
+                };
+
+                return StatusCode(StatusCodes.Status500InternalServerError, responseDto);
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+        [HttpPost("ApplyCoupon")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status205ResetContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ResponseDto>> ApplyCoupon([FromBody] CartDto cartDto)
+        {
+            try
+            {
+                ResponseDto responseDto = new();
+
+				if (cartDto != null)
+				{
+                    CartHeader cartHeader = await _context.CartHeaders.FirstOrDefaultAsync(c => c.UserId == cartDto.CartHeaderDto.UserId);
+
+                    if (cartHeader != null)
+                    {
+                        cartHeader.CouponCode = cartDto.CartHeaderDto.CouponCode;
+                        await _context.SaveChangesAsync();
+
+                        responseDto.Message = "Coupon Added";
+                        return Ok(responseDto);
+                    }
+                }
+
+                responseDto.Message = "Failded to apply coupon";
+				responseDto.Success = false;
+				return BadRequest(responseDto);
             }
             catch (Exception ex)
             {
