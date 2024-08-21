@@ -20,7 +20,7 @@ namespace Cyclone.RepositoryService.Implementation
 		{
 			return await _baseService.SendAsync(new RequestDto
 			{
-				Url = SD.CouponApiUrl + "/api/CouponApi",
+				Url = SD.CouponApiUrl + "/api/Coupon",
 				ApiType = SD.ApiType.POST,
 				Data = coupon
 			});
@@ -30,7 +30,7 @@ namespace Cyclone.RepositoryService.Implementation
 		{
 			return await _baseService.SendAsync(new RequestDto()
 			{
-				Url = SD.CouponApiUrl + "/api/CouponApi/" + code,
+				Url = SD.CouponApiUrl + "/api/Coupon/" + code,
 				ApiType = SD.ApiType.DELETE
 			});
 		}
@@ -39,7 +39,7 @@ namespace Cyclone.RepositoryService.Implementation
 		{
 			return await _baseService.SendAsync(new RequestDto()
 			{
-				Url = SD.CouponApiUrl + "/api/CouponApi/" + id,
+				Url = SD.CouponApiUrl + "/api/Coupon/" + id,
 				ApiType = SD.ApiType.DELETE
 			});
 		}
@@ -48,7 +48,7 @@ namespace Cyclone.RepositoryService.Implementation
 		{
 			return await _baseService.SendAsync(new RequestDto()
 			{
-				Url = SD.CouponApiUrl + "/api/CouponApi"
+				Url = SD.CouponApiUrl + "/api/coupon"
 			});
 		}
 
@@ -56,7 +56,7 @@ namespace Cyclone.RepositoryService.Implementation
 		{
 			return await _baseService.SendAsync(new RequestDto()
 			{
-				Url = SD.CouponApiUrl + "/api/CouponApi/" + code
+				Url = SD.CouponApiUrl + "/api/coupon/" + code
 			});
 		}
 
@@ -64,7 +64,7 @@ namespace Cyclone.RepositoryService.Implementation
 		{
 			return await _baseService.SendAsync(new RequestDto()
 			{
-				Url = SD.CouponApiUrl + "/api/CouponApi/" + id
+				Url = SD.CouponApiUrl + "/api/coupon/" + id
 			});
 		}
 
@@ -72,7 +72,7 @@ namespace Cyclone.RepositoryService.Implementation
 		{
 			return await _baseService.SendAsync(new RequestDto
 			{
-				Url = SD.CouponApiUrl + "/api/CouponApi",
+				Url = SD.CouponApiUrl + "/api/coupon",
 				ApiType = SD.ApiType.PUT,
 				Data = coupon
 			});

@@ -2,6 +2,8 @@
 using Cyclone.RepositoryService.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Cyclone.Controllers
 {
@@ -16,11 +18,14 @@ namespace Cyclone.Controllers
 
 
 
-        public async Task<IActionResult> Index(string id)
+        public async Task<IActionResult> Index()
         {
             try
             {
-                var responseDto = await _cartService.GetCart(id);
+                var claimsIdentity = (ClaimsIdentity)User.Identity;
+                var userId = claimsIdentity.FindFirst(JwtRegisteredClaimNames.Sub).Value;
+
+                var responseDto = await _cartService.GetCart(userId);
 
                 if (responseDto.Success == true && responseDto.Data != null)
                 {

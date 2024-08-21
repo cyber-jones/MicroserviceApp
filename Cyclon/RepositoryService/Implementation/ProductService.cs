@@ -20,7 +20,7 @@ namespace Cyclone.RepositoryService.Implementation
 		{
 			return await _baseService.SendAsync(new RequestDto()
 			{
-				Url = SD.ProductUrl + "/api/ProductApi/" + id,
+				Url = SD.ProductUrl + "/api/Product/" + id,
 				ApiType = SD.ApiType.DELETE
 			});
 		}
@@ -29,7 +29,7 @@ namespace Cyclone.RepositoryService.Implementation
 		{
 			return await _baseService.SendAsync(new RequestDto()
 			{
-				Url = SD.ProductUrl + "/api/ProductApi",
+				Url = SD.ProductUrl + "/api/Product",
 			});
 		}
 
@@ -37,7 +37,7 @@ namespace Cyclone.RepositoryService.Implementation
 		{
 			return await _baseService.SendAsync(new RequestDto()
 			{
-				Url = SD.ProductUrl + "/api/ProductApi/" + name,
+				Url = SD.ProductUrl + "/api/product/" + name,
 			});
 		}
 
@@ -45,7 +45,7 @@ namespace Cyclone.RepositoryService.Implementation
 		{
 			return await _baseService.SendAsync(new RequestDto()
 			{
-				Url = SD.ProductUrl + "/api/ProductApi/" + id,
+				Url = SD.ProductUrl + "/api/product/" + id,
 			});
 		}
 
@@ -53,7 +53,7 @@ namespace Cyclone.RepositoryService.Implementation
 		{
 			return await _baseService.SendAsync(new RequestDto()
 			{
-				Url = SD.ProductUrl + "/api/ProductApi",
+				Url = SD.ProductUrl + "/api/product",
 				Data = product,
 				ApiType = SD.ApiType.POST
 			});
@@ -63,7 +63,7 @@ namespace Cyclone.RepositoryService.Implementation
 		{
 			return await _baseService.SendAsync(new RequestDto()
 			{
-				Url = SD.ProductUrl + "/api/ProductApi",
+				Url = SD.ProductUrl + "/api/product",
 				Data = product,
 				ApiType = SD.ApiType.PUT
 			});

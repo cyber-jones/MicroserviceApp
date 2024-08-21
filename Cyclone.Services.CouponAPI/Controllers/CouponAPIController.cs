@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Cyclone.Services.CouponAPI.Controllers
 {
-	[Route("api/CouponApi")]
+	[Route("api/coupon")]
 	//[Authorize]
 	[ApiController]
 	public class CouponAPIController : ControllerBase

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Cyclone.Services.ProductAPI.Controllers
 {
-	[Route("api/[controller]")]
+	[Route("api/product")]
 	[ApiController]
 	public class ProductAPIController : ControllerBase
 	{

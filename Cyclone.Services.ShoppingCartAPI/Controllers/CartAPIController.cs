@@ -3,6 +3,7 @@ using Cyclone.Services.ShoppingCartAPI.Data;
 using Cyclone.Services.ShoppingCartAPI.DTOs;
 using Cyclone.Services.ShoppingCartAPI.Models;
 using Cyclone.Services.ShoppingCartAPI.RepositoryServices.Abstraction;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,8 @@ using System.Reflection.PortableExecutable;
 
 namespace Cyclone.Services.ShoppingCartAPI.Controllers
 {
-	[Route("api/[controller]")]
+	[Route("api/cart")]
+	[Authorize]
 	[ApiController]
 	public class CartAPIController : ControllerBase
 	{
@@ -60,7 +62,7 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
 					};
 
 					var responseProduct = await _productService.GetProducts();
-					if (!responseProduct.Success)
+					if (responseProduct == null || !responseProduct.Success)
 						return StatusCode(StatusCodes.Status500InternalServerError, responseProduct);
 
 					var products = JsonConvert.DeserializeObject<IEnumerable<ProductDto>>(Convert.ToString(responseProduct.Data));
@@ -74,7 +76,7 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
 					if (!string.IsNullOrEmpty(cartDto.CartHeaderDto.CouponCode))
 					{
                         var responseCoupon = await _couponService.GetCoupon(cartDto.CartHeaderDto.CouponCode);
-                        if (!responseProduct.Success)
+                        if (responseCoupon == null || !responseCoupon.Success)
                             return StatusCode(StatusCodes.Status500InternalServerError, responseCoupon);
 
                         var coupon = JsonConvert.DeserializeObject<CouponDto>(Convert.ToString(responseCoupon.Data));

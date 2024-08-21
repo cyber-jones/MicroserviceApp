@@ -20,7 +20,7 @@ namespace Cyclone.Services.ShoppingCartAPI.RepositoryServices.Implementation
             try
             {
                 var client = _httpClientFactory.CreateClient("Coupon");
-                var response = await client.GetAsync("/api/couponAPI/"+ couponCode);
+                var response = await client.GetAsync("/api/Coupon/" + couponCode);
                 var content = await response.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<ResponseDto>(content);
 
