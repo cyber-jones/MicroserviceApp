@@ -6,7 +6,6 @@ namespace Cyclone.DTOs
 	{
 		[Required]
 		public Guid CartDetailsId { get; set; }
-		[Required]
 		public Guid CartHeaderId { get; set; }
 		public CartHeaderDto? CartHeaderDto { get; set; }
 		[Required]

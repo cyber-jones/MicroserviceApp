@@ -16,14 +16,25 @@ namespace Cyclone.RepositoryService.Implementation
 
 
 
-
-        public async Task<ResponseDto> CartUpsert(CartDto product)
+        public async Task<ResponseDto> ApplyCoupon(CartDto cartDto)
         {
             return await _baseService.SendAsync(new RequestDto()
             {
-                Url = SD.CartUrl + "/api/cart/",
+                Url = SD.CartUrl + "/api/cart/applycoupon",
                 ApiType = SD.ApiType.POST,
-                Data = product
+                Data = cartDto
+            });
+        }
+
+
+
+        public async Task<ResponseDto> CartUpsert(CartDto cartDto)
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                Url = SD.CartUrl + "/api/cart/cartupsert",
+                ApiType = SD.ApiType.POST,
+                Data =  cartDto
             });
         }
 
@@ -35,6 +46,16 @@ namespace Cyclone.RepositoryService.Implementation
             return await _baseService.SendAsync(new RequestDto()
             {
                 Url = SD.CartUrl + "/api/cart/" + id
+            });
+        }
+
+
+
+        public async Task<ResponseDto> RemoveCart(string cartDetailsId)
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                Url = SD.CartUrl + "/api/cart/removecart",
             });
         }
     }

@@ -18,6 +18,8 @@ namespace Cyclone.Controllers
 
 
 
+
+
         public async Task<IActionResult> Index()
         {
             try
@@ -41,6 +43,80 @@ namespace Cyclone.Controllers
             }
 
             return Redirect("/Home/Index");
+        }
+
+
+
+
+
+        public async Task<IActionResult> RemoveCart(string Id)
+        {
+            try
+            {
+
+                if (!string.IsNullOrEmpty(Id))
+                {
+                    var responseDto = await _cartService.RemoveCart(Id);
+
+                    if (responseDto.Success == true)
+                    {
+                        TempData["success"] = responseDto.Message;
+                    }
+                    else
+                    {
+                        TempData["error"] = responseDto.Message;
+                    }
+                }
+                else
+                {
+                    TempData["error"] = "Failed to perform action";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+
+
+
+
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> ApplyCoupon(CartDto cartDto)
+        {
+            try
+            {
+
+                if (!ModelState.IsValid && cartDto != null)
+                {
+                    var responseDto = await _cartService.ApplyCoupon(cartDto);
+
+                    if (responseDto.Success == true)
+                    {
+                        TempData["success"] = responseDto.Message;
+                    }
+                    else
+                    {
+                        TempData["error"] = responseDto.Message;
+                    }
+                }
+                else
+                {
+                    TempData["error"] = "Failed to perform action";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

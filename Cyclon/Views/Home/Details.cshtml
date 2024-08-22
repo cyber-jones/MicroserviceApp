@@ -13,6 +13,8 @@
 
 
 <form method="post">
+    <input asp-for="ProductId" hidden />
+    <div asp-validation-summary="ModelOnly"></div>
     <div class=" pt-4">
         <div class="card container" style="border:1px solid #808080;">
             <div class="card-header bg-dark text-light row" style="border-radius: 0px;">
@@ -20,7 +22,7 @@
                     <h1 class="text-white">@Model.Name</h1>
                 </div>
                 <div class="col-12 col-md-6 text-end">
-                    <h1 class="text-warning">@Model.Price.ToString("C")</h1>
+                    <h1 class="text-warning">@* @Model.Price.ToString("C") *@ @string.Format("{0:c}", Model.Price)</h1>
                 </div>
             </div>
             <div class="card-body">
@@ -38,7 +40,7 @@
                                 </div>
                             </div>
                             <div class="row mx-0">
-                                <input class="form-control" />
+                                <input asp-for="Count" class="form-control" />
                             </div>
                         </div>
                     </div>

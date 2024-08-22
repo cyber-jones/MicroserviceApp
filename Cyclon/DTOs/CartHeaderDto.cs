@@ -7,11 +7,8 @@ namespace Cyclone.DTOs
 		public Guid CartHeaderId { get; set; }
 		[Required]
 		public string? UserId { get; set; }
-		[Required]
 		public string? CouponCode { get; set; }
-		[Required]
 		public double Discount { get; set; }
-		[Required]
 		public double CartTotal { get; set; }
 	}
 }

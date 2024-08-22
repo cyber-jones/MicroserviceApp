@@ -1,7 +1,9 @@
 using Cyclone.DTOs;
 using Cyclone.Models;
 using Cyclone.RepositoryService.Abstraction;
+using Cyclone.RepositoryService.Implementation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Newtonsoft.Json;
 using System.Diagnostics;
 
@@ -11,12 +13,19 @@ namespace Cyclon.Controllers
 	{
 		private readonly ILogger<HomeController> _logger;
 		private readonly IProductService _productService;
+		private readonly ICartService _cartService;
 
-		public HomeController(ILogger<HomeController> logger, IProductService productService)
+		public HomeController(ILogger<HomeController> logger, IProductService productService, ICartService cartService)
 		{
 			_logger = logger;
 			_productService = productService;
+            _cartService = cartService;
 		}
+
+
+
+
+
 
 		public async Task<IActionResult> Index()
 		{
@@ -44,6 +53,7 @@ namespace Cyclon.Controllers
 
 
 
+
         public async Task<IActionResult> Details(string id)
         {
             try
@@ -65,6 +75,71 @@ namespace Cyclon.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+
+
+
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> Details(ProductDto productDto)
+        {
+            try
+            {
+
+                if (!ModelState.IsValid && productDto != null)
+                {
+
+                    if (productDto.Count == 0)
+                    {
+                        TempData["warning"] = "Please input number of products to add to chart";
+                        return RedirectToAction(nameof(Details));
+                    }
+
+                    CartHeaderDto cartHeaderDto = new()
+                    {
+                        UserId = User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub).Value
+                    };
+
+                    CartDetailsDto cartDetailsDto = new()
+                    {
+                        ProductId = productDto.ProductId,
+                        Count = productDto.Count
+                    };
+
+                    List<CartDetailsDto> cartDetailsDtos = [ cartDetailsDto ];
+
+                    CartDto cartDto = new()
+                    {
+                        CartHeaderDto = cartHeaderDto,
+                        CartDetailsDto = cartDetailsDtos
+                    };
+
+                    var responseDto = await _cartService.CartUpsert(cartDto);
+
+                    if (responseDto.Success == true)
+                    {
+                        TempData["success"] = responseDto.Message;
+                        return RedirectToAction(nameof(Details));
+                    }
+
+                    TempData["error"] = responseDto.Message;
+                }
+                else
+                {
+                    TempData["error"] = "Failed to perform action";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Details));
+        }
+
+
 
 
 

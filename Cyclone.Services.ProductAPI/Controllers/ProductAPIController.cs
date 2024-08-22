@@ -9,7 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Cyclone.Services.ProductAPI.Controllers
 {
-	[Route("api/product")]
+    [Authorize]
+    [Route("api/product")]
 	[ApiController]
 	public class ProductAPIController : ControllerBase
 	{
@@ -109,7 +110,7 @@ namespace Cyclone.Services.ProductAPI.Controllers
 
 
 
-        [Authorize]
+
         [HttpPost]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
@@ -146,7 +147,7 @@ namespace Cyclone.Services.ProductAPI.Controllers
 
 
 
-        [Authorize]
+        
         [HttpPut]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status205ResetContent)]
@@ -183,7 +184,7 @@ namespace Cyclone.Services.ProductAPI.Controllers
 
 
 
-        [Authorize]
+
         [HttpDelete("{id:guid}", Name = "DeleteById")]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]

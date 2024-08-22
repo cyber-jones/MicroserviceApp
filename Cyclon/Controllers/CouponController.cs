@@ -8,7 +8,7 @@ namespace Cyclone.Controllers
 {
 	public class CouponController : Controller
 	{
-		private ICouponService _couponService;
+		private readonly ICouponService _couponService;
 
         public CouponController(ICouponService couponService)
         {
@@ -112,5 +112,5 @@ namespace Cyclone.Controllers
 
 			return RedirectToAction(nameof(Index));
 		}
-	}
+    }
 }

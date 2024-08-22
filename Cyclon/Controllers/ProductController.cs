@@ -26,7 +26,7 @@ namespace Cyclone.Controllers
 
 				if (responseDto.Success == true && responseDto.Data != null)
 				{
-					IEnumerable<ProductDto> products = JsonConvert.DeserializeObject<IEnumerable<ProductDto>>(Convert.ToString(responseDto.Data));
+					var products = JsonConvert.DeserializeObject<IEnumerable<ProductDto>>(Convert.ToString(responseDto.Data));
 					return View(products);
 				}
 

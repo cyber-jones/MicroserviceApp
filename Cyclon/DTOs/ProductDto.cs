@@ -21,5 +21,7 @@ namespace Cyclone.DTOs
 		[Required]
 		[Display(Name = "Category Name")]
 		public string CategoryName { get; set; }
+
+		public int Count { get; set; }
 	}
 }

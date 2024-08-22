@@ -127,6 +127,7 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
 			{
 				ResponseDto responseDto = new();
 				var cartHeaderFromDb = await _context.CartHeaders.AsNoTracking().FirstOrDefaultAsync(u => u.UserId == cartDto.CartHeaderDto.UserId);
+				var cartDetailsFromBody = cartDto.CartDetailsDto.First();
 
 				if (cartHeaderFromDb == null)
 				{
@@ -134,7 +135,7 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
 					await _context.CartHeaders.AddAsync(cartHeader);
 					await _context.SaveChangesAsync();
 
-					CartDetails cartDetails = _mapper.Map<CartDetails>(cartDto.CartDetailsDto.First());
+					CartDetails cartDetails = _mapper.Map<CartDetails>(cartDetailsFromBody);
 					cartDetails.CartHeaderId = cartHeader.CartHeaderId;
 					await _context.CartDetails.AddAsync(cartDetails);
 					await _context.SaveChangesAsync();
@@ -150,8 +151,8 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
 					if (cartDetailsFromDb == null)
 					{
 						//create cartDetails
-						cartDto.CartDetailsDto.First().CartDetailsId = cartHeaderFromDb.CartHeaderId;
-						await _context.CartDetails.AddAsync(_mapper.Map<CartDetails>(cartDto.CartDetailsDto.First()));
+						cartDetailsFromBody.CartHeaderId = cartHeaderFromDb.CartHeaderId;
+						await _context.CartDetails.AddAsync(_mapper.Map<CartDetails>(cartDetailsFromBody));
 						await _context.SaveChangesAsync();
 						responseDto.Message = "Item added to cart";
 						return CreatedAtAction(nameof(GetCart), new { userId = cartHeaderFromDb.UserId }, responseDto);
@@ -159,12 +160,12 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
 					else
 					{
 						//update count in cart details
-						cartDto.CartDetailsDto.First().Count += cartDetailsFromDb.Count;
-						cartDto.CartDetailsDto.First().CartHeaderId = cartDetailsFromDb.CartHeaderId;
-						cartDto.CartDetailsDto.First().CartDetailsId = cartDetailsFromDb.CartDetailsId;
+						cartDetailsFromDb.Count += cartDetailsFromBody.Count;
+						cartDetailsFromDb.CartHeaderId = cartHeaderFromDb.CartHeaderId;
+						_context.CartDetails.Update(cartDetailsFromDb);
 						await _context.SaveChangesAsync();
 						responseDto.Message = "New item added to cart";
-						return StatusCode(StatusCodes.Status205ResetContent);
+						return StatusCode(StatusCodes.Status205ResetContent, responseDto);
 					}
 				}
 			}
