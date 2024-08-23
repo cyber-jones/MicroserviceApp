@@ -52,7 +52,7 @@ namespace Cyclone.RepositoryService.Implementation
 			});
 		}
 
-		public async Task<ResponseDto> GetByCode(string code)
+		public async Task<ResponseDto> GetByCodeAsync(string code)
 		{
 			return await _baseService.SendAsync(new RequestDto()
 			{

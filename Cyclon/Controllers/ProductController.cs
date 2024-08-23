@@ -1,10 +1,12 @@
 ﻿using Cyclone.DTOs;
 using Cyclone.RepositoryService.Abstraction;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace Cyclone.Controllers
 {
+	[Authorize]
 	public class ProductController : Controller
 	{
 		private IProductService _productService;
@@ -94,6 +96,7 @@ namespace Cyclone.Controllers
 					if (responseDto.Success)
 					{
 						var product = JsonConvert.DeserializeObject<ProductDto>(Convert.ToString(responseDto.Data));
+						TempData["success"] = responseDto.Message;
 						return View(product);
 					}
 

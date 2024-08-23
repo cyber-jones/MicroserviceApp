@@ -33,7 +33,7 @@ namespace Cyclone.RepositoryService.Implementation
 			});
 		}
 
-		public async Task<ResponseDto> GetByName(string name)
+		public async Task<ResponseDto> GetByNameAsync(string name)
 		{
 			return await _baseService.SendAsync(new RequestDto()
 			{

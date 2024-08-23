@@ -4,9 +4,9 @@ namespace Cyclone.RepositoryService.Abstraction
 {
 	public interface ICartService
 	{
-		Task<ResponseDto> GetCart(string id);
-		Task<ResponseDto> CartUpsert(CartDto cartDto);
-		Task<ResponseDto> ApplyCoupon(CartDto cartDto);
-		Task<ResponseDto> RemoveCart(string cartDetailsId);
+		Task<ResponseDto> GetCartAsync(string id);
+		Task<ResponseDto> CartUpsertAsync(CartDto cartDto);
+		Task<ResponseDto> ApplyCouponAsync(CartDto cartDto);
+		Task<ResponseDto> RemoveCartAsync(string cartDetailsId);
 	}
 }

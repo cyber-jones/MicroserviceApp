@@ -165,7 +165,7 @@ namespace Cyclone.Services.CouponAPI.Controllers
 					_context.Coupons.Update(coupon);
 					await _context.SaveChangesAsync();
 
-					return StatusCode(StatusCodes.Status205ResetContent, response);
+					return Ok(response);
 				}
 
 				response.Success = false;

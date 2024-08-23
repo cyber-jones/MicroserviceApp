@@ -165,7 +165,7 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
 						_context.CartDetails.Update(cartDetailsFromDb);
 						await _context.SaveChangesAsync();
 						responseDto.Message = "New item added to cart";
-						return StatusCode(StatusCodes.Status205ResetContent, responseDto);
+						return Ok(responseDto);
 					}
 				}
 			}
@@ -212,9 +212,9 @@ namespace Cyclone.Services.ShoppingCartAPI.Controllers
                 }
 
                 await _context.SaveChangesAsync();
-                responseDto.Message = "Produc removed from cart";
+                responseDto.Message = "Product removed from cart";
 
-                return StatusCode(StatusCodes.Status204NoContent, responseDto);
+                return Ok(responseDto);
             }
             catch (Exception ex)
             {

@@ -166,7 +166,7 @@ namespace Cyclone.Services.ProductAPI.Controllers
 					_context.Products.Update(product);
 					await _context.SaveChangesAsync();
 
-					return StatusCode(StatusCodes.Status205ResetContent, response);
+					return Ok(response);
 				}
 
 				response.Success = false;

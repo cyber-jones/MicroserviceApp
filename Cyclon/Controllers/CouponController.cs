@@ -1,11 +1,13 @@
 ﻿using Cyclone.DTOs;
 using Cyclone.RepositoryService.Abstraction;
 using Cyclone.RepositoryService.Implementation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace Cyclone.Controllers
 {
+	[Authorize]
 	public class CouponController : Controller
 	{
 		private readonly ICouponService _couponService;

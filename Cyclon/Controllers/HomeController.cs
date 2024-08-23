@@ -116,7 +116,7 @@ namespace Cyclon.Controllers
                         CartDetailsDto = cartDetailsDtos
                     };
 
-                    var responseDto = await _cartService.CartUpsert(cartDto);
+                    var responseDto = await _cartService.CartUpsertAsync(cartDto);
 
                     if (responseDto.Success == true)
                     {

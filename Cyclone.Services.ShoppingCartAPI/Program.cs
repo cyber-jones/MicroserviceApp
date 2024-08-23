@@ -2,6 +2,7 @@ using Cyclone.Services.ShoppingCartAPI.Config;
 using Cyclone.Services.ShoppingCartAPI.Data;
 using Cyclone.Services.ShoppingCartAPI.RepositoryServices.Abstraction;
 using Cyclone.Services.ShoppingCartAPI.RepositoryServices.Implementation;
+using Cyclone.Services.ShoppingCartAPI.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -15,11 +16,16 @@ builder.Services.AddDbContext<CartDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("default") ??
 		throw new Exception("Could not find connection string")));
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<BackendApiAuthenticationHttpClientHandler>();
+
 builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
 builder.Services.AddHttpClient("Product", option =>
-	option.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ServiceUrls:Product")));
+	option.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ServiceUrls:Product")))
+		.AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
 builder.Services.AddHttpClient("Coupon", option =>
-    option.BaseAddress = new Uri(builder.Configuration["ServiceUrls:Coupon"]));
+    option.BaseAddress = new Uri(builder.Configuration["ServiceUrls:Coupon"]))
+		.AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICouponService, CouponService>();

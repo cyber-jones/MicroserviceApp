@@ -26,7 +26,7 @@
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Services
+                                Content Management
                             </a>
                             <ul class="dropdown-menu text-light" aria-labelledby="navbarDropdownMenuLink">
                                 <li><a class="dropdown-item" asp-controller="Coupon" asp-action="Index">Coupons</a></li>
@@ -37,7 +37,7 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item border-0">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Cart" asp-action="Index">Carts</a>
+                                <a class="nav-link text-white" asp-area="" asp-controller="Cart" asp-action="Index"><i class="bi bi-cart"></i></a>
                             </li>
                         }
                     </ul>

@@ -1,5 +1,6 @@
 ﻿using Cyclone.DTOs;
 using Cyclone.RepositoryService.Abstraction;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
@@ -7,7 +8,8 @@ using System.Security.Claims;
 
 namespace Cyclone.Controllers
 {
-    public class CartController : Controller
+	[Authorize]
+	public class CartController : Controller
     {
         private ICartService _cartService;
 
@@ -27,7 +29,7 @@ namespace Cyclone.Controllers
                 var claimsIdentity = (ClaimsIdentity)User.Identity;
                 var userId = claimsIdentity.FindFirst(JwtRegisteredClaimNames.Sub).Value;
 
-                var responseDto = await _cartService.GetCart(userId);
+                var responseDto = await _cartService.GetCartAsync(userId);
 
                 if (responseDto.Success == true && responseDto.Data != null)
                 {
@@ -49,14 +51,14 @@ namespace Cyclone.Controllers
 
 
 
-        public async Task<IActionResult> RemoveCart(string Id)
+        public async Task<IActionResult> RemoveCart(string id)
         {
             try
             {
 
-                if (!string.IsNullOrEmpty(Id))
+                if (!string.IsNullOrEmpty(id))
                 {
-                    var responseDto = await _cartService.RemoveCart(Id);
+                    var responseDto = await _cartService.RemoveCartAsync(id);
 
                     if (responseDto.Success == true)
                     {
@@ -93,9 +95,9 @@ namespace Cyclone.Controllers
             try
             {
 
-                if (!ModelState.IsValid && cartDto != null)
+                if (cartDto != null)
                 {
-                    var responseDto = await _cartService.ApplyCoupon(cartDto);
+                    var responseDto = await _cartService.ApplyCouponAsync(cartDto);
 
                     if (responseDto.Success == true)
                     {

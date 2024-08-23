@@ -129,7 +129,7 @@ namespace Cyclone.Services.AuthAPI.Controllers
 
 
 
-
+		[Authorize]
         [HttpPost("assignrole")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
