@@ -2,6 +2,7 @@ using Cyclone.DTOs;
 using Cyclone.Models;
 using Cyclone.RepositoryService.Abstraction;
 using Cyclone.RepositoryService.Implementation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Newtonsoft.Json;
@@ -81,7 +82,7 @@ namespace Cyclon.Controllers
 
 
 
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Details(ProductDto productDto)
         {

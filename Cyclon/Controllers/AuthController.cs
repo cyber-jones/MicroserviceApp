@@ -124,10 +124,7 @@ namespace Cyclone.Controllers
                     if (responseDto.Success)
                     {
 
-                        if (model.Role == null)
-                        {
-                            model.Role = SD.Customer;
-                        }
+                        model.Role ??= SD.Customer;
 
                         var assignRole = await _authService.AssignRoleAsync(model);
 

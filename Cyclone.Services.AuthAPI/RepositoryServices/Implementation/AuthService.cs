@@ -91,6 +91,7 @@ namespace Cyclone.Services.AuthAPI.RepositoryServices.Implementation
 			{
 				ApplicationUser applicationUser = new()
 				{
+
 					Name = registrationRequestDto.Name,
 					UserName = registrationRequestDto.Email,
 					Email = registrationRequestDto.Email,
@@ -138,7 +139,7 @@ namespace Cyclone.Services.AuthAPI.RepositoryServices.Implementation
 			try
 			{
 				if (email != null || role != null)
-				{
+				{ 
 					var user = await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.Email == email);
 
 					if (user != null)

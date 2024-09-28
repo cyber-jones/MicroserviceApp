@@ -12,13 +12,18 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var secret = builder.Configuration.GetValue<string>("JwtOptions:Secret");
+var issuer = builder.Configuration.GetValue<string>("JwtOptions:Issuer");
+var audience = builder.Configuration.GetValue<string>("JwtOptions:Audience");
+
+
 builder.Services.AddDbContext<AuthDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("default")));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 	.AddEntityFrameworkStores<AuthDbContext>();
 
-builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
@@ -55,11 +60,8 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 
-var secret = builder.Configuration.GetValue<string>("JwtOptions:Secret");
-var issuer = builder.Configuration.GetValue<string>("JwtOptions:Issuer");
-var audience = builder.Configuration.GetValue<string>("JwtOptions:Audience");
 
-byte[] key = Encoding.ASCII.GetBytes(secret);
+byte[] key = Encoding.ASCII.GetBytes(secret!);
 
 builder.Services.AddAuthentication(options =>
 {

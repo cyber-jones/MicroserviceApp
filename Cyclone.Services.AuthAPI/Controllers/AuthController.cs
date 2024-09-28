@@ -36,8 +36,6 @@ namespace Cyclone.Services.AuthAPI.Controllers
 		{
             try
 			{
-                ResponseDto responseDto = new();
-
                 if (loginRequestDto != null && ModelState.IsValid)
 				{
 					var loginResponseDto = await _authService.LoginAsync(loginRequestDto);
@@ -50,31 +48,27 @@ namespace Cyclone.Services.AuthAPI.Controllers
 						if (token != null)
 						{
                             loginResponseDto.Token = token;
-                            responseDto.Data = loginResponseDto;
-                            return Ok(responseDto);
+                            _responseDto.Data = loginResponseDto;
+                            return Ok(_responseDto);
                         }
 					}
 					else
 					{
-						responseDto.Success = false;
-						responseDto.Message = loginResponseDto.Message;
-						return StatusCode(StatusCodes.Status401Unauthorized, responseDto);
+						_responseDto.Success = false;
+						_responseDto.Message = loginResponseDto.Message;
+						return StatusCode(StatusCodes.Status401Unauthorized, _responseDto);
 					}
 				}
 
-				responseDto.Message = "Invalid Username or Password";
-				responseDto.Success = false;
-				return BadRequest(responseDto);
+				_responseDto.Message = "Invalid Username or Password";
+				_responseDto.Success = false;
+				return BadRequest(_responseDto);
 			}
 			catch (Exception ex)
 			{
-				ResponseDto responseDto = new()
-				{
-					Success = false,
-					Message = ex.Message,
-				};
-
-                return StatusCode(StatusCodes.Status500InternalServerError, responseDto);
+				_responseDto.Success = false;
+				_responseDto.Message = ex.Message; 
+                return StatusCode(StatusCodes.Status500InternalServerError, _responseDto);
 			}
 		}
 
@@ -154,7 +148,7 @@ namespace Cyclone.Services.AuthAPI.Controllers
 				}
 
 				_responseDto.Success = false;
-				_responseDto.Message = "Email and role required!";
+				_responseDto.Message = "Email and Role required!";
 				return BadRequest(_responseDto);
 			}
 			catch (Exception ex)
